@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--
+    ============================================================
+    [SECTION 00] PAGE IDENTITY + GLOBAL META
+    ============================================================
+    Replace this whole block if you want to change:
+      - title
+      - viewport rules
+      - CSS link
+      - overall page identity
+  -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assistant Portal</title>
+
+  <!--
+    Keep CSS centralized.
+    app.css controls:
+      - cards
+      - buttons
+      - terminals
+      - per-line coloring (.term .line.lvl-XXX.cat-YYY)
+  -->
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+
+<body>
+  <!--
+    ============================================================
+    [SECTION 01] HEADER / NAV
+    ============================================================
+    Replace this block if you want to redesign the top area.
+    Notes:
+      - /docs exists now
+      - /logs is a future "advanced logs" page (safe link even if not implemented yet)
+  -->
+  <header class="page-header">
+    <div class="page-title">
+      <h1>Assistant Portal</h1>
+      <p class="muted">
+        Operator view: Live Feed + Error Vault. Advanced tools move to the Logs page.
+      </p>
+    </div>
+
+    <nav class="page-nav">
+      <a class="navlink" href="/docs">Docs</a>
+      <a class="navlink" href="/logs">Advanced Logs</a>
+    </nav>
+  </header>
+
+
+  <!--
+    ============================================================
+    [SECTION 02] QUICK ACTIONS + OUTPUT CONSOLE
+    ============================================================
+    Replace this block if you want to change:
+      - which quick buttons exist
+      - where the output console sits
+    IMPORTANT:
+      - Output console is ONLY: <pre id="out">
+      - Do NOT put liveTerm here (liveTerm is reserved for the live log feed)
+  -->
+  <section class="card">
+    <h2>Quick Actions</h2>
+
+    <div class="row">
+      <!-- data-action values must match your app.js router -->
+      <button data-action="health">GET /health</button>
+      <button data-action="listTasks">GET /api/tasks</button>
+      <button data-action="docs">Open /docs</button>
+    </div>
+
+    <!-- Output Console -->
+    <div class="terminal-block">
+      <div class="terminal-head">
+        <span class="terminal-title">Output Console</span>
+        <div class="terminal-actions">
+          <button data-action="copyOutput">Copy</button>
+          <button data-action="clearOutput">Clear</button>
+        </div>
+      </div>
+
+      <!-- IMPORTANT: id="out" is where app.js prints results + copy messages -->
+      <pre id="out">(nothing yet)</pre>
+    </div>
+  </section>
+
+
+  <!--
+    ============================================================
+    [SECTION 03] OPERATOR LOGS VIEW (OPTION 3)
+    ============================================================
+    Replace this whole block if you want a different home layout.
+    This block contains:
+      - Live Feed terminal (#liveTerm)
+      - Error Vault terminal (#errorTerm)
+    IMPORTANT IDs (app.js depends on these):
+      - liveTerm
+      - errorTerm
+      - liveTail
+      - liveIntervalMs
+      - errorMax
+  -->
+  <section class="grid-2">
+
+    <!-- =========================================================
+         [SECTION 03A] LIVE FEED
+         =========================================================
+         #liveTerm is the only live feed terminal on the page.
+         It should have class="term" so your line-color CSS applies.
+    -->
+    <div class="card">
+      <h2>Live Feed</h2>
+      <p class="muted">
+        Streams logs while you’re actively debugging. Auto-scrolls like a terminal (unless you scroll up).
+      </p>
+
+      <div class="row wrap">
+        <button data-action="startLive">Start Live</button>
+        <button data-action="stopLive">Stop</button>
+        <button data-action="clearLive">Clear</button>
+        <button data-action="copyLive">Copy</button>
+
+        <label class="inline">
+          Tail
+          <input id="liveTail" value="200" />
+        </label>
+
+        <label class="inline">
+          Interval (ms)
+          <input id="liveIntervalMs" value="1200" />
+        </label>
+      </div>
+
+      <!--
+        LIVE TERMINAL
+        - Must be id="liveTerm"
+        - Must include class="term" so per-line .line coloring works
+        - app.js should append <div class="line lvl-INFO cat-http"> ... </div>
+      -->
+      <pre id="liveTerm" class="term">(live feed stopped)</pre>
+    </div>
+
+
+    <!-- =========================================================
+         [SECTION 03B] ERROR VAULT
+         =========================================================
+         Captures only ERROR logs that happen during your live session.
+         This is your “copy/paste the actual problem” window.
+    -->
+    <div class="card">
+      <h2>Error Vault</h2>
+      <p class="muted">
+        Automatically captures ERROR lines (and stack traces) detected from the live feed.
+      </p>
+
+      <div class="row wrap">
+        <button data-action="clearErrors">Clear</button>
+        <button data-action="copyErrors">Copy</button>
+
+        <label class="inline">
+          Max Errors
+          <input id="errorMax" value="50" />
+        </label>
+      </div>
+
+      <!--
+        ERROR TERMINAL
+        - Must be id="errorTerm"
+        - Keep class="term" so coloring can apply here too if you want
+      -->
+      <pre id="errorTerm" class="term">(no errors captured yet)</pre>
+    </div>
+
+  </section>
+
+
+  <!--
+    ============================================================
+    [SECTION 04] FOOTER (OPTIONAL)
+    ============================================================
+    Safe to delete later.
+  -->
+  <footer class="muted" style="margin-top: 18px;">
+    Tip: If copy fails on some browsers, click inside the terminal first, then press Copy again.
+  </footer>
+
+
+  <!--
+    ============================================================
+    [SECTION 05] SCRIPTS
+    ============================================================
+    Keep app.js last so it can query the DOM safely.
+  -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
